@@ -253,9 +253,27 @@ async def backtest_cmd(update, context):
 async def gitpush_cmd(update, context):
     import subprocess
     try:
+        # Stage all
         subprocess.run(["git", "add", "."], check=True)
-        subprocess.run(["git", "commit", "-m", f"batax402 update {datetime.now().strftime('%H:%M')}"], check=True)
+        
+        # Check if there are changes
+        status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
+        if not status.stdout.strip():
+            await update.message.reply_text("No changes to push.")
+            return
+
+        # Commit
+        subprocess.run(["git", "commit", "-m", f"batax402 auto-update {datetime.now().strftime('%H:%M')}"], check=True)
+        
+        # Push
         result = subprocess.run(["git", "push"], capture_output=True, text=True)
+        await update.message.reply_text(
+            f"**Git Push OK**\n"
+            f"<code>{result.stdout.splitlines()[-1] if result.stdout else 'Done'}</code>",
+            parse_mode='HTML'
+        )
+    except Exception as e:
+        await update.message.reply_text(f"Git error: {e}")
         await update.message.reply_text(
             f"**Git Push OK**\n"
             f"<code>{result.stdout.splitlines()[-1] if result.stdout else 'Done'}</code>",
