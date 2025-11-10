@@ -37,7 +37,7 @@ PAIRS = [
 ]
 WINDOW = 20
 Z_THRESHOLD = 2.0
-MIN_TRADE_USD = 50
+MIN_TRADE_USD = 1
 SLIPPAGE_BPS = 50
 
 # --- Global ---
